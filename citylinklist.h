@@ -2,12 +2,13 @@
 #define __CITYLINKLIST_H_
 #include <stdio.h>
 typedef struct CityInfo {
-  char name[20];        //定义城市名称
-  double pos_x;         //定义城市x坐标
-  double pos_y;         //定义城市y坐标
-  double area;          //定义城市面积
-  unsigned int Hu_popu; //定义城市人口
-  double GDP;
+  char name[20];         //定义城市名称
+  double pos_x;          //定义城市x坐标
+  double pos_y;          //定义城市y坐标
+  double area;           //定义城市面积
+  unsigned int Hu_popu;  //定义城市人口
+  double GDP;            //定义城市GDP
+  double Per_GDP;        //定义城市人均GDP
   struct CityInfo *next; //定义指针指向下一个城市
 } CityInfo;              //定义城市信息结构体
 typedef struct CityPoin {

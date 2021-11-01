@@ -21,22 +21,24 @@ void SafeInputStr(FILE *fp, char *Dst, unsigned int count) {
 void PrintCityInfo(CityInfo *node) {
   printf("\t\t\t\t\t城市名称:%s\n", node->name);
   printf("\t\t\t\t\t城市坐标:(%lf,%lf)\n", node->pos_x, node->pos_y);
-  printf("\t\t\t\t\t城市面积:%lf\n", node->area);
-  printf("\t\t\t\t\t城市人口:%d\n", node->Hu_popu);
-  printf("\t\t\t\t\t城市GDP:%lf\n", node->GDP);
+  printf("\t\t\t\t\t城市面积:%lf(平方千米)\n", node->area);
+  printf("\t\t\t\t\t城市人口:%d(万)\n", node->Hu_popu);
+  printf("\t\t\t\t\t城市GDP:%lf(万元)\n", node->GDP);
+  printf("\t\t\t\t\t城市人均GDP:%lf(万元)\n", node->Per_GDP);
 }
 void InputCityInfo(CityInfo *node, char *name) {
   strcpy(node->name, name);
-  printf("\t\t\t\t\t请输入该城市的x坐标:");
+  printf("\t\t\t\t\t请输入该城市的x坐标(千米):");
   scanf("%lf", &node->pos_x);
-  printf("\t\t\t\t\t请输入该城市的y坐标:");
+  printf("\t\t\t\t\t请输入该城市的y坐标(千米):");
   scanf("%lf", &node->pos_y);
-  printf("\t\t\t\t\t请输入该城市的人口:");
+  printf("\t\t\t\t\t请输入该城市的人口(万):");
   scanf("%d", &node->Hu_popu);
-  printf("\t\t\t\t\t请输入该城市的面积:");
+  printf("\t\t\t\t\t请输入该城市的面积(平方千米):");
   scanf("%lf", &node->area);
-  printf("\t\t\t\t\t请输入该城市的GDP:");
+  printf("\t\t\t\t\t请输入该城市的GDP(万元):");
   scanf("%lf", &node->GDP);
+  node->Per_GDP = (node->GDP / node->Hu_popu);
   return;
 }
 void SearchNode(CityInfo *head, char *name, CityInfo **result) {
@@ -60,7 +62,7 @@ void GetCityPos(CityInfo *head) {
   SafeInputStr(stdin, name, 20);
   while (head != NULL) {
     if (strcmp(head->name, name) == 0) {
-      printf("\t\t\t\t\t查到该城市坐标为:(%lf,%lf)\n", head->pos_x,
+      printf("\t\t\t\t\t查到该城市坐标为:(%lf,%lf)(千米)\n", head->pos_x,
              head->pos_y);
       return;
     } else {
@@ -209,23 +211,23 @@ void UpdateCity(CityInfo *head) {
         }
         break;
       case 2:
-        printf("\t\t\t\t\t该城市当前的城市x坐标为:%lf\n", head->pos_x);
-        printf("\t\t\t\t\t请输入新的城市x坐标:");
+        printf("\t\t\t\t\t该城市当前的城市x坐标为:%lf(千米)\n", head->pos_x);
+        printf("\t\t\t\t\t请输入新的城市x坐标(千米):");
         scanf("%lf", &head->pos_x);
         break;
       case 3:
-        printf("\t\t\t\t\t该城市当前的城市y坐标为:%lf\n", head->pos_x);
-        printf("\t\t\t\t\t请输入新的城市y坐标:");
+        printf("\t\t\t\t\t该城市当前的城市y坐标为:%lf(千米)\n", head->pos_x);
+        printf("\t\t\t\t\t请输入新的城市y坐标:(千米)");
         scanf("%lf", &head->pos_y);
         break;
       case 4:
-        printf("\t\t\t\t\t该城市当前的人口为%d", head->Hu_popu);
-        printf("\t\t\t\t\t请输入新的城市人口:");
+        printf("\t\t\t\t\t该城市当前的人口为%d(万)", head->Hu_popu);
+        printf("\t\t\t\t\t请输入新的城市人口:(万)");
         scanf("%d", &head->Hu_popu);
         break;
       case 5:
-        printf("\t\t\t\t\t该城市当前的GDP为%lf", head->GDP);
-        printf("\t\t\t\t\t请输入新的城市GDP:");
+        printf("\t\t\t\t\t该城市当前的GDP为%lf(万元)", head->GDP);
+        printf("\t\t\t\t\t请输入新的城市GDP:(万元)");
         scanf("%lf", &head->GDP);
         break;
 
@@ -248,11 +250,11 @@ void UpdateCity(CityInfo *head) {
             }
           }
         }
-        printf("\t\t\t\t\t请输入新的城市x坐标:");
+        printf("\t\t\t\t\t请输入新的城市x坐标(千米):");
         scanf("%lf", &head->pos_x);
-        printf("\t\t\t\t\t请输入新的城市y坐标:");
+        printf("\t\t\t\t\t请输入新的城市y坐标(千米):");
         scanf("%lf", &head->pos_y);
-        printf("\t\t\t\t\t请输入新的城市人口:");
+        printf("\t\t\t\t\t请输入新的城市人口(万):");
         scanf("%d", &head->Hu_popu);
         break;
       case 7:
@@ -275,11 +277,11 @@ void ChoiceCity(CityInfo *head) {
   CityPoin *NODE = NULL;
   CityPoin *TMP = NULL;
   unsigned int flag = 0;
-  printf("\t\t\t\t\t请输入x坐标:");
+  printf("\t\t\t\t\t请输入x坐标(千米):");
   scanf("%lf", &pos_x);
-  printf("\t\t\t\t\t请输入y坐标:");
+  printf("\t\t\t\t\t请输入y坐标(千米):");
   scanf("%lf", &pos_y);
-  printf("\t\t\t\t\t请输入距离:");
+  printf("\t\t\t\t\t请输入距离(千米):");
   scanf("%lf", &D);
   while (head != NULL) {
     extent =
@@ -310,7 +312,8 @@ void ChoiceCity(CityInfo *head) {
     printf("\t\t\t\t\t查到%d个城市符合条件\n\n", flag);
     TMP = HEAD;
     for (int i = 1; i <= flag; i++) {
-      printf("\t\t\t\t\t%s---->距离--->%lf\n\n", TMP->addr->name, TMP->extent);
+      printf("\t\t\t\t\t%s---->距离--->%lf(千米)\n\n", TMP->addr->name,
+             TMP->extent);
       TMP = HEAD->next;
     }
     TMP = HEAD;
@@ -349,7 +352,7 @@ void WriteOut(CityInfo *head) {
     return;
   }
   while (head != NULL) {
-    fwrite((void *)head, 64, 1, fp);
+    fwrite((void *)head, 72, 1, fp);
     head = head->next;
   }
   fclose(fp);
@@ -375,7 +378,7 @@ void ReadIn(CityInfo **head, CityInfo **end) {
       perror("malloc");
       continue;
     }
-    fread((void *)node, 64, 1, fp);
+    fread((void *)node, 72, 1, fp);
     node->next = NULL;
     if (HEAD == NULL) {
       HEAD = node;
