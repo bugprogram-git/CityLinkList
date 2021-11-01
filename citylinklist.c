@@ -23,6 +23,7 @@ void PrintCityInfo(CityInfo *node) {
   printf("\t\t\t\t\t城市坐标:(%lf,%lf)\n", node->pos_x, node->pos_y);
   printf("\t\t\t\t\t城市面积:%lf\n", node->area);
   printf("\t\t\t\t\t城市人口:%d\n", node->Hu_popu);
+  printf("\t\t\t\t\t城市GDP:%lf\n", node->GDP);
 }
 void InputCityInfo(CityInfo *node, char *name) {
   strcpy(node->name, name);
@@ -34,6 +35,8 @@ void InputCityInfo(CityInfo *node, char *name) {
   scanf("%d", &node->Hu_popu);
   printf("\t\t\t\t\t请输入该城市的面积:");
   scanf("%lf", &node->area);
+  printf("\t\t\t\t\t请输入该城市的GDP:");
+  scanf("%lf", &node->GDP);
   return;
 }
 void SearchNode(CityInfo *head, char *name, CityInfo **result) {
@@ -180,8 +183,9 @@ void UpdateCity(CityInfo *head) {
       printf("\t\t\t\t\t2.修改城市x坐标\n");
       printf("\t\t\t\t\t3.修改城市y坐标\n");
       printf("\t\t\t\t\t4.修改城市人口\n");
-      printf("\t\t\t\t\t5.修改该城市所有信息\n");
-      printf("\t\t\t\t\t6.退回上一级菜单\n");
+      printf("\t\t\t\t\t5.修改城市GDP\n");
+      printf("\t\t\t\t\t6.修改该城市所有信息\n");
+      printf("\t\t\t\t\t7.退回上一级菜单\n");
       printf("\t\t\t\t\t请输入您的选择:");
       scanf("%d", &choice);
       switch (choice) {
@@ -220,6 +224,12 @@ void UpdateCity(CityInfo *head) {
         scanf("%d", &head->Hu_popu);
         break;
       case 5:
+        printf("\t\t\t\t\t该城市当前的GDP为%lf", head->GDP);
+        printf("\t\t\t\t\t请输入新的城市GDP:");
+        scanf("%lf", &head->GDP);
+        break;
+
+      case 6:
         while (1) {
           printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
           printf("\t\t\t\t\t请输入新的城市名称:");
@@ -245,7 +255,7 @@ void UpdateCity(CityInfo *head) {
         printf("\t\t\t\t\t请输入新的城市人口:");
         scanf("%d", &head->Hu_popu);
         break;
-      case 6:
+      case 7:
         return;
       default:
         printf("\t\t\t\t\t输入错误!\n");
@@ -339,7 +349,7 @@ void WriteOut(CityInfo *head) {
     return;
   }
   while (head != NULL) {
-    fwrite((void *)head, 56, 1, fp);
+    fwrite((void *)head, 64, 1, fp);
     head = head->next;
   }
   fclose(fp);
@@ -365,7 +375,7 @@ void ReadIn(CityInfo **head, CityInfo **end) {
       perror("malloc");
       continue;
     }
-    fread((void *)node, 56, 1, fp);
+    fread((void *)node, 64, 1, fp);
     node->next = NULL;
     if (HEAD == NULL) {
       HEAD = node;
