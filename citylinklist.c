@@ -64,7 +64,7 @@ void GetCityPos(CityInfo *head) {
   printf("未查找到符合条件的城市!\n");
   return;
 }
-void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned count) {
+void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned int count) {
   CityInfo *result = NULL;
   CityInfo *node = NULL;
   char name[20];
@@ -293,10 +293,10 @@ void ChoiceCity(CityInfo *head) {
   if (flag == 0) {
     printf("\t\t\t\t\t未查找到符合条件的城市\n");
   } else {
-    printf("\t\t\t\t\t查到%d个城市符合条件", flag);
+    printf("\t\t\t\t\t查到%d个城市符合条件\n\n", flag);
     TMP = HEAD;
     for (int i = 1; i <= flag; i++) {
-      printf("\t\t\t\t\t%s---->距离--->%lf\n", TMP->addr->name, TMP->extent);
+      printf("\t\t\t\t\t%s---->距离--->%lf\n\n", TMP->addr->name, TMP->extent);
       TMP = HEAD->next;
     }
     TMP = HEAD;

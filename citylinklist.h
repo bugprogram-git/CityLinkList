@@ -27,7 +27,9 @@ void UpdateCity(CityInfo *head); //更新城市信息
 void ChoiceCity(
     CityInfo *
         head); //给定一个坐标(pos_x,pos_y)和一个距离D,返回所有与P的距离小于D的城市;
-void WriteOut(CityInfo *head); //将当前信息保存到文件内;
+void AddCityToLinkList(CityInfo **head, CityInfo **end,
+                       unsigned int count); //将某节点加入城市链表
+void WriteOut(CityInfo *head);              //将当前信息保存到文件内;
 void ReadIn(CityInfo **head, CityInfo **end);   //从外部文件读入数据;
 void MainMenu(CityInfo **head, CityInfo **end); //主界面菜单
 void ExitMenu();                                //退出界面;
