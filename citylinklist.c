@@ -6,10 +6,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 void SafeInputStr(FILE *fp, char *Dst, unsigned int count) {
-  for (int i = 1; i < count; i++) {
+  __fpurge(stdin);
+  for (int i = 0; i < count - 1; i++) {
     Dst[i] = getchar();
-    if (Dst[i] == '\0' || Dst[i] == '\n')
+    if (Dst[i] == '\0' || Dst[i] == '\n') {
       Dst[i] = '\0';
+      break;
+    }
   }
   Dst[count] = '\0';
   __fpurge(fp);
@@ -49,9 +52,9 @@ void GetCityPos(CityInfo *head) {
     printf("\t\t\t\t\t城市链表为空!\n");
     return;
   }
-  char name[10];
+  char name[20];
   printf("\t\t\t\t\t请输入城市名称:");
-  scanf("%s", name);
+  SafeInputStr(stdin, name, 20);
   while (head != NULL) {
     if (strcmp(head->name, name) == 0) {
       printf("\t\t\t\t\t查到该城市坐标为:(%lf,%lf)\n", head->pos_x,
@@ -77,7 +80,7 @@ void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned int count) {
       return;
     }
     printf("\t\t\t\t\t请输入第%d个城市的名称:", i);
-    scanf("%s", name);
+    SafeInputStr(stdin, name, 20);
     SearchNode(*head, name, &result);
     if (result == NULL) {
       InputCityInfo(node, name);
@@ -120,7 +123,7 @@ void DeleteCity(CityInfo **head, CityInfo **end) {
   for (int i = 1; i <= count; i++) {
     char name[10];
     printf("请输入您要删除的第%d个城市名称:", count);
-    scanf("%s", name);
+    SafeInputStr(stdin, name, 20);
     if (strcmp((*head)->name, name) == 0) {
       if ((*end) == (*head)) {
         free(*head);
@@ -159,7 +162,7 @@ void UpdateCity(CityInfo *head) {
   int flag = 0;
   char name[20];
   printf("\t\t\t\t\t请输入您要更新的城市名称:");
-  scanf("%s", name);
+  SafeInputStr(stdin, name, 20);
   while (head != NULL) {
     if (strcmp(head->name, name) == 0) {
       flag = 1;
@@ -186,7 +189,7 @@ void UpdateCity(CityInfo *head) {
         while (1) {
           printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
           printf("\t\t\t\t\t请输入新的城市名称:");
-          scanf("%s", name);
+          SafeInputStr(stdin, name, 20);
           if (strcmp(name, head->name) == 0) {
             printf("\t\t\t\t\t城市名未更新!\n");
             break;
@@ -220,7 +223,8 @@ void UpdateCity(CityInfo *head) {
         while (1) {
           printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
           printf("\t\t\t\t\t请输入新的城市名称:");
-          scanf("%s", name);
+          bzero(name, 20);
+          SafeInputStr(stdin, name, 20);
           if (strcmp(name, head->name) == 0) {
             printf("\t\t\t\t\t城市名未更新!\n");
             break;
@@ -313,7 +317,7 @@ void ExitMenu() {
   while (1) {
     printf("\t\t\t\t\t你确认要退出系统吗?(yes/no)\n");
     printf("\t\t\t\t\t请输入你的选择:");
-    scanf("%s", choice);
+    SafeInputStr(stdin, choice, 4);
     if (strcasecmp("yes", choice) == 0) {
       exit(0);
     } else {
@@ -326,9 +330,9 @@ void ExitMenu() {
   }
 }
 void WriteOut(CityInfo *head) {
-  char filename[10];
+  char filename[20];
   printf("\t\t\t\t\t请输入您想要保存数据的文件名:");
-  scanf("%s", filename);
+  SafeInputStr(stdin, filename, 20);
   FILE *fp = fopen(filename, "w");
   if (fp == NULL) {
     perror("\t\t\t\t\tfopen");
@@ -341,13 +345,13 @@ void WriteOut(CityInfo *head) {
   fclose(fp);
 }
 void ReadIn(CityInfo **head, CityInfo **end) {
-  char filename[10];
+  char filename[20];
   CityInfo *tmp = *end;
   CityInfo *node = NULL;
   CityInfo *HEAD = NULL;
   CityInfo *END = NULL;
   printf("\t\t\t\t\t请输入您要导入的文件名称:");
-  scanf("%s", filename);
+  SafeInputStr(stdin, filename, 20);
   FILE *fp = fopen(filename, "r+");
   if (fgetc(fp) == EOF) {
     printf("\t\t\t\t\t该文件为空文件!\n");
