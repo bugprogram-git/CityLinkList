@@ -21,9 +21,8 @@ void PrintCityInfo(CityInfo *node) {
   printf("\t\t\t\t\t城市面积:%lf\n", node->area);
   printf("\t\t\t\t\t城市人口:%d\n", node->Hu_popu);
 }
-void InputCityInfo(CityInfo *node) {
-  printf("\t\t\t\t\t请输入该城市的名称:");
-  scanf("%s", node->name);
+void InputCityInfo(CityInfo *node, char *name) {
+  strcpy(node->name, name);
   printf("\t\t\t\t\t请输入该城市的x坐标:");
   scanf("%lf", &node->pos_x);
   printf("\t\t\t\t\t请输入该城市的y坐标:");
@@ -35,9 +34,11 @@ void InputCityInfo(CityInfo *node) {
   return;
 }
 void SearchNode(CityInfo *head, char *name, CityInfo **result) {
+  *result = NULL;
   while (head != NULL) {
     if (strcmp(name, head->name) == 0) {
       *result = head;
+      break;
     } else {
       head = head->next;
     }
@@ -64,7 +65,9 @@ void GetCityPos(CityInfo *head) {
   return;
 }
 void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned count) {
+  CityInfo *result = NULL;
   CityInfo *node = NULL;
+  char name[20];
   for (int i = 1; i <= count; i++) {
     printf("\t\t\t\t\t请输入第%d个城市的节点信息\n", i);
     node = malloc(sizeof(CityInfo));
@@ -73,13 +76,21 @@ void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned count) {
       perror("malloc:");
       return;
     }
-    InputCityInfo(node);
-    if (*head == NULL) {
-      *head = node;
-      *end = node;
+    printf("\t\t\t\t\t请输入第%d个城市的名称:", i);
+    scanf("%s", name);
+    SearchNode(*head, name, &result);
+    if (result == NULL) {
+      InputCityInfo(node, name);
+      if (*head == NULL) {
+        *head = node;
+        *end = node;
+      } else {
+        (*end)->next = node;
+        *end = node;
+      }
     } else {
-      (*end)->next = node;
-      *end = node;
+      i--;
+      printf("\t\t\t\t\tcity name is exist!\n");
     }
   }
 }
@@ -91,14 +102,6 @@ void CreateCityLinkList(CityInfo **head, CityInfo **end) {
   printf("创建成功!\n");
   return;
 }
-void InsertCity(CityInfo **head, CityInfo **end) {
-  unsigned int count;
-  CityInfo *node;
-  printf("\t\t\t\t\t请输入您要插入的城市节点数:");
-  scanf("%d", &count);
-  AddCityToLinkList(head, end, count);
-}
-
 void DeleteCity(CityInfo **head, CityInfo **end) {
   //删除城市节点有几种特殊情况
   // 1.整个链表为空;
@@ -149,10 +152,12 @@ void DeleteCity(CityInfo **head, CityInfo **end) {
     printf("未查找到相关城市信息,删除失败!\n");
   }
 }
+void InputCityName(); //输入城市名称
 void UpdateCity(CityInfo *head) {
   unsigned int choice;
+  CityInfo **result;
   int flag = 0;
-  char name[10];
+  char name[20];
   printf("\t\t\t\t\t请输入您要更新的城市名称:");
   scanf("%s", name);
   while (head != NULL) {
@@ -162,6 +167,7 @@ void UpdateCity(CityInfo *head) {
     }
     head = head->next;
   }
+  bzero(name, 20);
   if (flag == 1) {
     printf("\t\t\t\t\t当前城市信息如下\n");
     PrintCityInfo(head);
@@ -177,9 +183,23 @@ void UpdateCity(CityInfo *head) {
       scanf("%d", &choice);
       switch (choice) {
       case 1:
-        printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
-        printf("\t\t\t\t\t请输入新的城市名称:");
-        scanf("%s", head->name);
+        while (1) {
+          printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
+          printf("\t\t\t\t\t请输入新的城市名称:");
+          scanf("%s", name);
+          if (strcmp(name, head->name) == 0) {
+            printf("\t\t\t\t\t城市名未更新!\n");
+            break;
+          } else {
+            SearchNode(head, name, result);
+            if (result == NULL) {
+              strcpy(head->name, name);
+              break;
+            } else {
+              printf("\t\t\t\t\t城市链表已有该城市\n");
+            }
+          }
+        }
         break;
       case 2:
         printf("\t\t\t\t\t该城市当前的城市x坐标为:%lf\n", head->pos_x);
@@ -197,8 +217,23 @@ void UpdateCity(CityInfo *head) {
         scanf("%d", &head->Hu_popu);
         break;
       case 5:
-        printf("\t\t\t\t\t请输入新的城市名称:");
-        scanf("%s", head->name);
+        while (1) {
+          printf("\t\t\t\t\t该城市当前城市名称为:%s\n", head->name);
+          printf("\t\t\t\t\t请输入新的城市名称:");
+          scanf("%s", name);
+          if (strcmp(name, head->name) == 0) {
+            printf("\t\t\t\t\t城市名未更新!\n");
+            break;
+          } else {
+            SearchNode(head, name, result);
+            if (result == NULL) {
+              strcpy(head->name, name);
+              break;
+            } else {
+              printf("\t\t\t\t\t城市链表已有该城市\n");
+            }
+          }
+        }
         printf("\t\t\t\t\t请输入新的城市x坐标:");
         scanf("%lf", &head->pos_x);
         printf("\t\t\t\t\t请输入新的城市y坐标:");
@@ -226,11 +261,11 @@ void ChoiceCity(CityInfo *head) {
   CityPoin *NODE = NULL;
   CityPoin *TMP = NULL;
   unsigned int flag = 0;
-  printf("请输入x坐标:");
+  printf("\t\t\t\t\t请输入x坐标:");
   scanf("%lf", &pos_x);
-  printf("请输入y坐标:");
+  printf("\t\t\t\t\t请输入y坐标:");
   scanf("%lf", &pos_y);
-  printf("请输入距离:");
+  printf("\t\t\t\t\t请输入距离:");
   scanf("%lf", &D);
   while (head != NULL) {
     extent =
@@ -256,12 +291,12 @@ void ChoiceCity(CityInfo *head) {
     head = head->next;
   }
   if (flag == 0) {
-    printf("未查找到符合条件的城市\n");
+    printf("\t\t\t\t\t未查找到符合条件的城市\n");
   } else {
-    printf("查到%d个城市符合条件", flag);
+    printf("\t\t\t\t\t查到%d个城市符合条件", flag);
     TMP = HEAD;
     for (int i = 1; i <= flag; i++) {
-      printf("%s---->距离--->%lf\n", TMP->addr->name, TMP->extent);
+      printf("\t\t\t\t\t%s---->距离--->%lf\n", TMP->addr->name, TMP->extent);
       TMP = HEAD->next;
     }
     TMP = HEAD;
@@ -303,6 +338,7 @@ void WriteOut(CityInfo *head) {
     fwrite((void *)head, 56, 1, fp);
     head = head->next;
   }
+  fclose(fp);
 }
 void ReadIn(CityInfo **head, CityInfo **end) {
   char filename[10];
@@ -354,6 +390,7 @@ void MainMenu(CityInfo **head, CityInfo **end) {
   putchar('\n');
   unsigned int answer;
   char choice[5] = {0};
+  unsigned int count;
   while (1) {
     printf("\t\t\t\t\t*********************************\n");
     printf("\t\t\t\t\t*1.创建城市链表                  \n");
@@ -373,7 +410,9 @@ void MainMenu(CityInfo **head, CityInfo **end) {
       CreateCityLinkList(head, end);
       break;
     case 2:
-      InsertCity(head, end);
+      printf("\t\t\t\t\t请输入你要插入的城市节点个数:");
+      scanf("%d", &count);
+      AddCityToLinkList(head, end, count);
       break;
     case 3:
       DeleteCity(head, end);

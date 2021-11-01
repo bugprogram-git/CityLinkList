@@ -16,13 +16,11 @@ typedef struct CityPoin {
 } CityPoin; //定义城市信息指针结构体;
 void SafeInputStr(FILE *fp, char *Dst, unsigned int count); //安全输入
 void PrintCityInfo(CityInfo *node); //打印城市信息函数
-void InputCityInfo(CityInfo *node); //输入城市信息将其存储到node指针里面
+void InputCityInfo(CityInfo *node,
+                   char *name); //输入城市信息将其存储到node指针里面
 void SearchNode(CityInfo *head, char *name, CityInfo **result); //查找节点
 void CreateCityLinkList(CityInfo **head, CityInfo **end); //创建城市链表
-void GetCityPos(
-    CityInfo
-        *head); //给定一个城市名返回其x,y坐标,将其存储在pos_x,和pos_y地址里面
-void InsertCity(CityInfo **head, CityInfo **end); //插入城市节点;
+void GetCityPos(CityInfo *head); //给定一个城市名返回其x,y坐标;
 void DeleteCity(CityInfo **head,
                 CityInfo **end); //按城市名称查找并删除节点;
 void UpdateCity(CityInfo *head); //更新城市信息
