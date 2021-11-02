@@ -128,7 +128,7 @@ void DeleteCity(CityInfo **head, CityInfo **end) {
   scanf("%d", &count);
   for (int i = 1; i <= count; i++) {
     char name[10];
-    printf("请输入您要删除的第%d个城市名称:", count);
+    printf("\t\t\t\t\t请输入您要删除的第%d个城市名称:", count);
     SafeInputStr(stdin, name, 20);
     if (strcmp((*head)->name, name) == 0) {
       if ((*end) == (*head)) {
@@ -141,7 +141,7 @@ void DeleteCity(CityInfo **head, CityInfo **end) {
         free(next);
         next = NULL;
       }
-      printf("删除成功!\n");
+      printf("\t\t\t\t\t删除成功!\n");
       continue;
     }
     tmp = *head;
