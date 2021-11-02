@@ -396,8 +396,28 @@ void ReadIn(CityInfo **head, CityInfo **end) {
       END->next = node;
     } else {
       printf("\t\t\t\t\t城市链表中已有该城市!是否覆盖?(yes/no):");
-      SafeInputStr(stdin, choice, 4);
-      if (strcmp("yes", choice) == 0) {
+      while (1) {
+        SafeInputStr(stdin, choice, 4);
+        if (strcmp("yes", choice) == 0) {
+          strcpy(result->name, node->name);
+          result->pos_x = node->pos_x;
+          result->pos_y = node->pos_y;
+          result->area = node->area;
+          result->Hu_popu = node->Hu_popu;
+          result->GDP = node->GDP;
+          result->Per_GDP = node->Per_GDP;
+          free(node);
+          node = NULL;
+          break;
+        } else {
+          if (strcmp("no", choice) == 0) {
+            free(node);
+            node = NULL;
+            break;
+          } else {
+            printf("\t\t\t\t\t输入错误!\n");
+          }
+        }
       }
     }
     if ((*head) == NULL) {
