@@ -15,7 +15,8 @@ typedef struct CityPoin {
   CityInfo *addr;
   double extent;
   struct CityPoin *next;
-} CityPoin; //定义城市信息指针结构体;
+} CityPoin;        //定义城市信息指针结构体;
+void LoadingBar(); //模拟进度条函数
 void SafeInputStr(FILE *fp, char *Dst, unsigned int count); //安全输入
 void PrintCityInfo(CityInfo *node); //打印城市信息函数
 void InputCityInfo(CityInfo *node,
@@ -34,6 +35,8 @@ void AddCityToLinkList(CityInfo **head, CityInfo **end,
 void WriteOut(CityInfo *head);              //将当前信息保存到文件内;
 void ReadIn(CityInfo **head, CityInfo **end);   //从外部文件读入数据;
 void MainMenu(CityInfo **head, CityInfo **end); //主界面菜单
-void ExitMenu();                                //退出界面;
+void SearchCityInfo(CityInfo *head);            //查找某城市信息;
+void CalTwoCityDis(); //计算某两个城市之间的距离
+void ExitMenu();      //退出界面;
 
 #endif

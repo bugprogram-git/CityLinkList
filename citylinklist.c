@@ -23,7 +23,7 @@ void PrintCityInfo(CityInfo *node) {
   printf("\t\t\t\t\t城市坐标:(%lf,%lf)\n", node->pos_x, node->pos_y);
   printf("\t\t\t\t\t城市面积:%lf(平方千米)\n", node->area);
   printf("\t\t\t\t\t城市人口:%d(万)\n", node->Hu_popu);
-  printf("\t\t\t\t\t城市GDP:%lf(万元)\n", node->GDP);
+  printf("\t\t\t\t\t城市GDP:%lf(亿元)\n", node->GDP);
   printf("\t\t\t\t\t城市人均GDP:%lf(万元)\n", node->Per_GDP);
 }
 void InputCityInfo(CityInfo *node, char *name) {
@@ -36,7 +36,7 @@ void InputCityInfo(CityInfo *node, char *name) {
   scanf("%d", &node->Hu_popu);
   printf("\t\t\t\t\t请输入该城市的面积(平方千米):");
   scanf("%lf", &node->area);
-  printf("\t\t\t\t\t请输入该城市的GDP(万元):");
+  printf("\t\t\t\t\t请输入该城市的GDP(亿元):");
   scanf("%lf", &node->GDP);
   node->Per_GDP = (node->GDP / node->Hu_popu);
   return;
@@ -96,18 +96,19 @@ void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned int count) {
         (*end)->next = node;
         *end = node;
       }
+      printf("\t\t\t\t\t操作成功!\n");
     } else {
       i--;
-      printf("\t\t\t\t\tcity name is exist!\n");
+      printf("\t\t\t\t\t该城市已经存在!\n");
     }
   }
 }
 void CreateCityLinkList(CityInfo **head, CityInfo **end) {
   unsigned int count;
-  printf("请输入您要创建的城市节点个数:");
+  printf("\t\t\t\t\t请输入您要创建的城市节点个数:");
   scanf("%d", &count);
   AddCityToLinkList(head, end, count);
-  printf("创建成功!\n");
+  printf("\t\t\t\t\t创建成功!\n");
   return;
 }
 void DeleteCity(CityInfo **head, CityInfo **end) {
@@ -117,13 +118,13 @@ void DeleteCity(CityInfo **head, CityInfo **end) {
   // 3.删除第一个节点;
   // 4.删除最后一个节点;
   if (*head == NULL) {
-    printf("城市链表为空!\n");
+    printf("\t\t\t\t\t城市链表为空!\n");
     return;
   }
   CityInfo *tmp = NULL;
   CityInfo *tmp2 = NULL;
   unsigned int count;
-  printf("请输入您要删除的城市节点个数:");
+  printf("\t\t\t\t\t请输入您要删除的城市节点个数:");
   scanf("%d", &count);
   for (int i = 1; i <= count; i++) {
     char name[10];
@@ -226,8 +227,8 @@ void UpdateCity(CityInfo *head) {
         scanf("%d", &head->Hu_popu);
         break;
       case 5:
-        printf("\t\t\t\t\t该城市当前的GDP为%lf(万元)", head->GDP);
-        printf("\t\t\t\t\t请输入新的城市GDP:(万元)");
+        printf("\t\t\t\t\t该城市当前的GDP为%lf(亿元)", head->GDP);
+        printf("\t\t\t\t\t请输入新的城市GDP:(亿元)");
         scanf("%lf", &head->GDP);
         break;
 
@@ -359,6 +360,12 @@ void WriteOut(CityInfo *head) {
 }
 void ReadIn(CityInfo **head, CityInfo **end) {
   char filename[20];
+  char choice[4] = {0};
+  CityInfo *result = NULL;
+  if (result == NULL) {
+    perror("malloc");
+    return;
+  }
   CityInfo *tmp = *end;
   CityInfo *node = NULL;
   CityInfo *HEAD = NULL;
@@ -380,22 +387,32 @@ void ReadIn(CityInfo **head, CityInfo **end) {
     }
     fread((void *)node, 72, 1, fp);
     node->next = NULL;
-    if (HEAD == NULL) {
-      HEAD = node;
-      END = node;
+    SearchNode(*head, node->name, &result);
+    if (result == NULL) {
+      if (HEAD == NULL) {
+        HEAD = node;
+        END = node;
+      }
+      END->next = node;
+    } else {
+      printf("\t\t\t\t\t城市链表中已有该城市!是否覆盖?(yes/no):");
+      SafeInputStr(stdin, choice, 4);
+      if (strcmp("yes", choice) == 0) {
+      }
     }
-    END->next = node;
+    if ((*head) == NULL) {
+      *head = HEAD;
+      *end = END;
+    } else {
+      (*end)->next = HEAD;
+      *end = END;
+    }
   }
-  if ((*head) == NULL) {
-    *head = HEAD;
-    *end = END;
-  } else {
-    (*end)->next = HEAD;
-    *end = END;
-  }
+
   printf("\t\t\t\t\t导入成功!\n");
 }
 void LoadingBar() {
+  char str[] = {'-', '\\', '|', '/'};
   for (int i = 1; i <= 50; i++) {
     printf("\t\t\t     [");
     for (int j = 1; j <= 50; j++) {
@@ -408,15 +425,63 @@ void LoadingBar() {
     printf("]");
     printf(" %d", 2 * i);
     putchar('%');
-    printf(" Loading");
-    for (int a = 1; a <= (i / 10); a++) {
-      putchar('.');
+    if (i == 50) {
+      printf(" ");
+      printf("[ \033[32m  done  \033[0m ]");
+      printf("           ");
+    } else {
+      printf("[ %c Loading... ]", str[i % 4]);
     }
     printf("\r");
     fflush(stdout);
     usleep(40 * 1000);
   }
   putchar('\n');
+}
+void SearchCityInfo(CityInfo *head) {
+  char cityname[20];
+  CityInfo *result = NULL;
+  printf("\t\t\t\t\t请输入您要查找的城市名称:");
+  SafeInputStr(stdin, cityname, 20);
+  SearchNode(head, cityname, &result);
+  if (result == NULL) {
+    printf("\t\t\t\t\t未查找到该城市!\n");
+  } else {
+    printf("\t\t\t\t\t查找到该城市信息如下:\n");
+    PrintCityInfo(result);
+    putchar('\n');
+  }
+}
+void CalTwoCityDis(CityInfo *head) {
+  char Src_City[20];
+  char Dst_City[20];
+  CityInfo *Src_result = NULL;
+  CityInfo *Dst_result = NULL;
+  while (1) {
+    printf("\t\t\t\t\t请输入起点城市:");
+    SafeInputStr(stdin, Src_City, 20);
+    SearchNode(head, Src_City, &Src_result);
+    if (Src_result == NULL) {
+      printf("\t\t\t\t\t为查找到相关城市信息!\n");
+    } else {
+      break;
+    }
+  }
+  while (1) {
+    printf("\t\t\t\t\t请输入终点城市:");
+    SafeInputStr(stdin, Dst_City, 20);
+    SearchNode(head, Dst_City, &Dst_result);
+    if (Dst_result == NULL) {
+      printf("\t\t\t\t\t未查找到相关城市信息!\n");
+    } else {
+      break;
+    }
+  }
+  double distance;
+  distance = sqrt(pow((Src_result->pos_x - Dst_result->pos_x), 2) +
+                  pow((Src_result->pos_y - Dst_result->pos_y), 2));
+  printf("\t\t\t\t\t计算该两个城市的距离为:%lf\n", distance);
+  return;
 }
 
 void MainMenu(CityInfo **head, CityInfo **end) {
@@ -426,17 +491,19 @@ void MainMenu(CityInfo **head, CityInfo **end) {
   char choice[5] = {0};
   unsigned int count;
   while (1) {
-    printf("\t\t\t\t\t*********************************\n");
-    printf("\t\t\t\t\t*1.创建城市链表                  \n");
-    printf("\t\t\t\t\t*2.向城市链表插入新的城市节点    \n");
-    printf("\t\t\t\t\t*3.删除某个城市节点              \n");
-    printf("\t\t\t\t\t*4.查找某城市坐标                \n");
-    printf("\t\t\t\t\t*5.更新某个城市信息              \n");
-    printf("\t\t\t\t\t*6.返回距离某坐标范围内的所有城市\n");
-    printf("\t\t\t\t\t*7.保存当前城市链表信息          \n");
-    printf("\t\t\t\t\t*8.读取数据库文件                \n");
-    printf("\t\t\t\t\t*9.退出系统                      \n");
-    printf("\t\t\t\t\t*********************************\n");
+    printf("\t\t\t\t\t********************************* \n");
+    printf("\t\t\t\t\t*1.创建城市链表                   \n");
+    printf("\t\t\t\t\t*2.向城市链表插入新的城市节点     \n");
+    printf("\t\t\t\t\t*3.删除某个城市节点               \n");
+    printf("\t\t\t\t\t*4.查找某城市坐标                 \n");
+    printf("\t\t\t\t\t*5.查找某城市信息                 \n");
+    printf("\t\t\t\t\t*6.更新某个城市信息               \n");
+    printf("\t\t\t\t\t*7.返回距离某坐标范围内的所有城市 \n");
+    printf("\t\t\t\t\t*8.返回两个城市之间的距离         \n");
+    printf("\t\t\t\t\t*9.保存当前城市链表信息           \n");
+    printf("\t\t\t\t\t*10.读取数据库文件                \n");
+    printf("\t\t\t\t\t*11.退出系统                      \n");
+    printf("\t\t\t\t\t**********************************\n");
     printf("\t\t\t\t 请输入:");
     scanf("%d", &answer);
     switch (answer) {
@@ -455,18 +522,24 @@ void MainMenu(CityInfo **head, CityInfo **end) {
       GetCityPos(*head);
       break;
     case 5:
-      UpdateCity(*head);
+      SearchCityInfo(*head);
       break;
     case 6:
-      ChoiceCity(*head);
+      UpdateCity(*head);
       break;
     case 7:
-      WriteOut(*head);
+      ChoiceCity(*head);
       break;
     case 8:
-      ReadIn(head, end);
+      CalTwoCityDis(*head);
       break;
     case 9:
+      WriteOut(*head);
+      break;
+    case 10:
+      ReadIn(head, end);
+      break;
+    case 11:
       ExitMenu();
       continue;
     default:
