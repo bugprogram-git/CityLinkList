@@ -395,16 +395,33 @@ void ReadIn(CityInfo **head, CityInfo **end) {
   }
   printf("\t\t\t\t\t导入成功!\n");
 }
-void MainMenu(CityInfo **head, CityInfo **end) {
-  printf("\t\t\t\t\t\t******欢迎******\n");
-  printf("\t\t\t\t\t\tloading.....\n");
-  printf("\t\t\t\t\t\t");
-  for (int i = 0; i < 15; i++) {
-    putchar('#');
-    usleep(100000);
+void LoadingBar() {
+  for (int i = 1; i <= 50; i++) {
+    printf("\t\t\t     [");
+    for (int j = 1; j <= 50; j++) {
+      if (j <= i) {
+        printf("\033[32m#\033[0m");
+      } else {
+        putchar(' ');
+      }
+    }
+    printf("]");
+    printf(" %d", 2 * i);
+    putchar('%');
+    printf(" Loading");
+    for (int a = 1; a <= (i / 10); a++) {
+      putchar('.');
+    }
+    printf("\r");
     fflush(stdout);
+    usleep(40 * 1000);
   }
   putchar('\n');
+}
+
+void MainMenu(CityInfo **head, CityInfo **end) {
+  printf("\t\t\t\t\t\t******欢迎******\n");
+  LoadingBar();
   unsigned int answer;
   char choice[5] = {0};
   unsigned int count;
