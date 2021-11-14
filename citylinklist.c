@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 void SafeInputStr(FILE *fp, char *Dst, unsigned int count) {
-  __fpurge(stdin);
+  __fpurge(fp); //刷新文件缓冲区
   for (int i = 0; i < count - 1; i++) {
     Dst[i] = getchar();
     if (Dst[i] == '\0' || Dst[i] == '\n') {
@@ -15,7 +15,7 @@ void SafeInputStr(FILE *fp, char *Dst, unsigned int count) {
     }
   }
   Dst[count] = '\0';
-  __fpurge(fp);
+  __fpurge(fp); //刷新文件缓冲区
   return;
 }
 void PrintCityInfo(CityInfo *node) {
@@ -42,13 +42,13 @@ void InputCityInfo(CityInfo *node, char *name) {
   return;
 }
 void SearchNode(CityInfo *head, char *name, CityInfo **result) {
-  *result = NULL;
+  *result = NULL; //初始化查找节点空间
   while (head != NULL) {
     if (strcmp(name, head->name) == 0) {
-      *result = head;
+      *result = head; //如果查找到,则将查找到的地址存放在result里面,函数返回
       break;
     } else {
-      head = head->next;
+      head = head->next; //指针指向下一个节点
     }
   }
 }
@@ -59,9 +59,9 @@ void GetCityPos(CityInfo *head) {
   }
   char name[20];
   printf("\t\t\t\t\t请输入城市名称:");
-  SafeInputStr(stdin, name, 20);
+  SafeInputStr(stdin, name, 20); //输入城市名称
   while (head != NULL) {
-    if (strcmp(head->name, name) == 0) {
+    if (strcmp(head->name, name) == 0) { //比较查找的城市名称是否相等
       printf("\t\t\t\t\t查到该城市坐标为:(%lf,%lf)(千米)\n", head->pos_x,
              head->pos_y);
       return;
@@ -86,15 +86,15 @@ void AddCityToLinkList(CityInfo **head, CityInfo **end, unsigned int count) {
     }
     printf("\t\t\t\t\t请输入第%d个城市的名称:", i);
     SafeInputStr(stdin, name, 20);
-    SearchNode(*head, name, &result);
+    SearchNode(*head, name, &result); //查找城市链表里面是否存在该城市名称
     if (result == NULL) {
       InputCityInfo(node, name);
-      if (*head == NULL) {
-        *head = node;
-        *end = node;
+      if (*head == NULL) { //如果链表为空
+        *head = node;      //改变头指针指向
+        *end = node;       //改变尾指针指向
       } else {
         (*end)->next = node;
-        *end = node;
+        *end = node; //改变尾指针指向
       }
       printf("\t\t\t\t\t操作成功!\n");
     } else {
@@ -107,7 +107,7 @@ void CreateCityLinkList(CityInfo **head, CityInfo **end) {
   unsigned int count;
   printf("\t\t\t\t\t请输入您要创建的城市节点个数:");
   scanf("%d", &count);
-  AddCityToLinkList(head, end, count);
+  AddCityToLinkList(head, end, count); //插入城市节点
   printf("\t\t\t\t\t创建成功!\n");
   return;
 }
@@ -176,10 +176,10 @@ void UpdateCity(CityInfo *head) {
     }
     head = head->next;
   }
-  bzero(name, 20);
+  bzero(name, 20); //初始化城市名称空间
   if (flag == 1) {
     printf("\t\t\t\t\t当前城市信息如下\n");
-    PrintCityInfo(head);
+    PrintCityInfo(head); //打印城市信息
     while (1) {
       printf("\t\t\t\t\t-------------------------\n");
       printf("\t\t\t\t\t1.修改城市名称\n");
@@ -276,7 +276,8 @@ void ChoiceCity(CityInfo *head) {
   CityPoin *HEAD = NULL;
   CityPoin *END = NULL;
   CityPoin *NODE = NULL;
-  CityPoin *TMP = NULL;
+  CityPoin *TMP = NULL; //定义4个空指针
+  //这里之所以使用CityPoin类型存放城市指针;主要是为了后续扩展(如对查找到的城市信息进行排序)
   unsigned int flag = 0;
   printf("\t\t\t\t\t请输入x坐标(千米):");
   scanf("%lf", &pos_x);
@@ -285,17 +286,17 @@ void ChoiceCity(CityInfo *head) {
   printf("\t\t\t\t\t请输入距离(千米):");
   scanf("%lf", &D);
   while (head != NULL) {
-    extent =
-        sqrt(pow((head->pos_x - pos_x), 2) + pow((head->pos_y - pos_y), 2));
+    extent = sqrt(pow((head->pos_x - pos_x), 2) +
+                  pow((head->pos_y - pos_y), 2)); //计算距离
     if (extent < D) {
-      NODE = malloc(sizeof(CityPoin));
+      NODE = malloc(sizeof(CityPoin)); //申请内存空间
       if (NODE == NULL) {
         perror("malloc:");
         return;
       }
       NODE->next = NULL;
       NODE->addr = head;
-      NODE->extent = extent;
+      NODE->extent = extent; //初始化节点数据
       if (HEAD == NULL) {
         HEAD = NODE;
         END = NODE;
@@ -327,36 +328,36 @@ void ChoiceCity(CityInfo *head) {
   return;
 }
 void ExitMenu() {
-  char choice[10];
+  char choice[10]; //初始化一块栈空间用于存放用户输入的字符串
   while (1) {
     printf("\t\t\t\t\t你确认要退出系统吗?(yes/no)\n");
     printf("\t\t\t\t\t请输入你的选择:");
     SafeInputStr(stdin, choice, 4);
     if (strcasecmp("yes", choice) == 0) {
-      exit(0);
+      exit(0); //如果用户输入"yes"则推出进程
     } else {
       if (strcasecmp("no", choice) == 0) {
         break;
       } else {
-        printf("输入错误!\n");
+        printf("输入错误!\n"); //输入错误则进入下一次循环
       }
     }
   }
 }
 void WriteOut(CityInfo *head) {
-  char filename[20];
+  char filename[20]; //初始化一块栈空间用于存放用户输入的文件名
   printf("\t\t\t\t\t请输入您想要保存数据的文件名:");
-  SafeInputStr(stdin, filename, 20);
-  FILE *fp = fopen(filename, "w");
+  SafeInputStr(stdin, filename, 20); //输入文件名称
+  FILE *fp = fopen(filename, "w");   //写入方式打开文件
   if (fp == NULL) {
     perror("\t\t\t\t\tfopen");
     return;
   }
   while (head != NULL) {
-    fwrite((void *)head, 72, 1, fp);
-    head = head->next;
+    fwrite((void *)head, 72, 1, fp); //循环写入数据
+    head = head->next;               //指向下一个节点
   }
-  fclose(fp);
+  fclose(fp); //关闭文件流
 }
 void ReadIn(CityInfo **head, CityInfo **end) {
   char filename[20];
@@ -371,23 +372,23 @@ void ReadIn(CityInfo **head, CityInfo **end) {
   CityInfo *HEAD = NULL;
   CityInfo *END = NULL;
   printf("\t\t\t\t\t请输入您要导入的文件名称:");
-  SafeInputStr(stdin, filename, 20);
+  SafeInputStr(stdin, filename, 20); //输入文件名称
   FILE *fp = fopen(filename, "r+");
   if (fgetc(fp) == EOF) {
     printf("\t\t\t\t\t该文件为空文件!\n");
     return;
   } else {
     rewind(fp);
-  }
+  } //判断该文件是否为空文件
   while (!feof(fp)) {
-    node = malloc(sizeof(CityInfo));
+    node = malloc(sizeof(CityInfo)); //申请内存空间
     if (node == NULL) {
       perror("malloc");
       continue;
     }
-    fread((void *)node, 72, 1, fp);
+    fread((void *)node, 72, 1, fp); //读入城市数据
     node->next = NULL;
-    SearchNode(*head, node->name, &result);
+    SearchNode(*head, node->name, &result); //查找该节点是否已经存在与城市链表
     if (result == NULL) {
       if (HEAD == NULL) {
         HEAD = node;
@@ -397,7 +398,7 @@ void ReadIn(CityInfo **head, CityInfo **end) {
     } else {
       printf("\t\t\t\t\t城市链表中已有该城市!是否覆盖?(yes/no):");
       while (1) {
-        SafeInputStr(stdin, choice, 4);
+        SafeInputStr(stdin, choice, 4); //输入yes/no
         if (strcmp("yes", choice) == 0) {
           strcpy(result->name, node->name);
           result->pos_x = node->pos_x;
@@ -411,7 +412,7 @@ void ReadIn(CityInfo **head, CityInfo **end) {
           break;
         } else {
           if (strcmp("no", choice) == 0) {
-            free(node);
+            free(node); //释放节点空间
             node = NULL;
             break;
           } else {
@@ -431,7 +432,7 @@ void ReadIn(CityInfo **head, CityInfo **end) {
 
   printf("\t\t\t\t\t导入成功!\n");
 }
-void LoadingBar() {
+void LoadingBar() { //加载进度条
   char str[] = {'-', '\\', '|', '/'};
   for (int i = 1; i <= 50; i++) {
     printf("\t\t\t     [");
@@ -472,7 +473,7 @@ void SearchCityInfo(CityInfo *head) {
     putchar('\n');
   }
 }
-void CalTwoCityDis(CityInfo *head) {
+void CalTwoCityDis(CityInfo *head) { //计算某两个城市之间的距离
   char Src_City[20];
   char Dst_City[20];
   CityInfo *Src_result = NULL;
