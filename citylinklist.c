@@ -363,10 +363,6 @@ void ReadIn(CityInfo **head, CityInfo **end) {
   char filename[20];
   char choice[4] = {0};
   CityInfo *result = NULL;
-  if (result == NULL) {
-    perror("malloc");
-    return;
-  }
   CityInfo *tmp = *end;
   CityInfo *node = NULL;
   CityInfo *HEAD = NULL;
